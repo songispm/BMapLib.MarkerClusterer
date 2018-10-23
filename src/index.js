@@ -487,7 +487,6 @@ Cluster.prototype.addMarker = function(marker){
     marker.isInCluster = true;
     this._markers.push(marker);
 
-    return true;
 };
 
 /**
