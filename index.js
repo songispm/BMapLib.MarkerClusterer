@@ -1227,18 +1227,22 @@ MarkerClusterer.prototype.addMarker = function(marker) {
 };
 
 /**
- * 根据所给定的标记，创建聚合点
+ * 根据所给定的标记，创建聚合点，并且遍历所有聚合点
  * @return 无返回值
  */
 MarkerClusterer.prototype._createClusters = function(){
     var mapBounds = this._map.getBounds();
-    if (!mapBounds.getCenter()) {
-        return
-    }
     var extendedBounds = getExtendedBounds(this._map, mapBounds, this._gridSize);
     for(var i = 0, marker; marker = this._markers[i]; i++){
         if(!marker.isInCluster && extendedBounds.containsPoint(marker.getPosition()) ){
             this._addToClosestCluster(marker);
+        }
+    }
+
+    var len = this._markers.length;
+    for (var i = 0; i < len; i++) {
+        if(this._clusters[i]){
+            this._clusters[i].render();
         }
     }
 };
@@ -1533,6 +1537,14 @@ Cluster.prototype.addMarker = function(marker){
     marker.isInCluster = true;
     this._markers.push(marker);
 
+    return true;
+};
+
+/**
+ * 进行dom操作
+ * @return 无返回值
+ */
+Cluster.prototype.render = function(){
     var len = this._markers.length;
 
     if (len < this._minClusterSize) {
@@ -1544,8 +1556,6 @@ Cluster.prototype.addMarker = function(marker){
         this._isReal = true;
         this.updateClusterMarker();
     }
-
-    return true;
 };
 
 /**
