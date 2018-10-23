@@ -11,7 +11,7 @@ import TextIconOverlay from 'bmaplib.texticonoverlay';
 var getExtendedBounds = function(map, bounds, gridSize){
     bounds = cutBoundsInRange(bounds);
     var pixelNE = map.pointToPixel(bounds.getNorthEast());
-    var pixelSW = map.pointToPixel(bounds.getSouthWest()); 
+    var pixelSW = map.pointToPixel(bounds.getSouthWest());
     pixelNE.x += gridSize;
     pixelNE.y -= gridSize;
     pixelSW.x -= gridSize;
@@ -33,14 +33,14 @@ var cutBoundsInRange = function (bounds) {
     var maxY = getRange(bounds.getNorthEast().lat, -74, 74);
     var minY = getRange(bounds.getSouthWest().lat, -74, 74);
     return new BMap.Bounds(new BMap.Point(minX, minY), new BMap.Point(maxX, maxY));
-}; 
+};
 
 /**
  * 对单个值进行边界处理。
  * @param {Number} i 要处理的数值
  * @param {Number} min 下边界值
  * @param {Number} max 上边界值
- * 
+ *
  * @return {Number} 返回不越界的数值
  */
 var getRange = function (i, mix, max) {
@@ -79,7 +79,7 @@ var indexOf = function(item, source){
                 }
             }
         }
-    }        
+    }
     return index;
 };
 
@@ -87,19 +87,19 @@ var indexOf = function(item, source){
  *@exports MarkerClusterer as BMapLib.MarkerClusterer
  */
 
-    /**
-     * MarkerClusterer
-     * @class 用来解决加载大量点要素到地图上产生覆盖现象的问题，并提高性能
-     * @constructor
-     * @param {Map} map 地图的一个实例。
-     * @param {Json Object} options 可选参数，可选项包括：<br />
-     *    markers {Array<Marker>} 要聚合的标记数组<br />
-     *    girdSize {Number} 聚合计算时网格的像素大小，默认60<br />
-     *    maxZoom {Number} 最大的聚合级别，大于该级别就不进行相应的聚合<br />
-     *    minClusterSize {Number} 最小的聚合数量，小于该数量的不能成为一个聚合，默认为2<br />
-     *    isAverangeCenter {Boolean} 聚合点的落脚位置是否是所有聚合在内点的平均值，默认为否，落脚在聚合内的第一个点<br />
-     *    styles {Array<IconStyle>} 自定义聚合后的图标风格，请参考TextIconOverlay类<br />
-     */
+/**
+ * MarkerClusterer
+ * @class 用来解决加载大量点要素到地图上产生覆盖现象的问题，并提高性能
+ * @constructor
+ * @param {Map} map 地图的一个实例。
+ * @param {Json Object} options 可选参数，可选项包括：<br />
+ *    markers {Array<Marker>} 要聚合的标记数组<br />
+ *    girdSize {Number} 聚合计算时网格的像素大小，默认60<br />
+ *    maxZoom {Number} 最大的聚合级别，大于该级别就不进行相应的聚合<br />
+ *    minClusterSize {Number} 最小的聚合数量，小于该数量的不能成为一个聚合，默认为2<br />
+ *    isAverangeCenter {Boolean} 聚合点的落脚位置是否是所有聚合在内点的平均值，默认为否，落脚在聚合内的第一个点<br />
+ *    styles {Array<IconStyle>} 自定义聚合后的图标风格，请参考TextIconOverlay类<br />
+ */
 var MarkerClusterer  = function(map, options){
     try {
         BMap;
@@ -112,24 +112,24 @@ var MarkerClusterer  = function(map, options){
     this._map = map;
     this._markers = [];
     this._clusters = [];
-    
+
     var opts = options || {};
     this._gridSize = opts["gridSize"] || 60;
     this._maxZoom = opts["maxZoom"] || 18;
-    this._minClusterSize = opts["minClusterSize"] || 2;           
+    this._minClusterSize = opts["minClusterSize"] || 2;
     this._isAverageCenter = false;
     if (opts['isAverageCenter'] != undefined) {
         this._isAverageCenter = opts['isAverageCenter'];
-    }    
+    }
     this._styles = opts["styles"] || [];
 
     var that = this;
     this._map.addEventListener("zoomend",function(){
-        that._redraw();     
+        that._redraw();
     });
 
     this._map.addEventListener("moveend",function(){
-        that._redraw();     
+        that._redraw();
     });
 
     var mkrs = opts["markers"];
@@ -149,7 +149,7 @@ MarkerClusterer.prototype.addMarkers = function(markers){
     for(var i = 0, len = markers.length; i <len ; i++){
         this._pushMarkerTo(markers[i]);
     }
-    this._createClusters();   
+    this._createClusters();
 };
 
 /**
@@ -187,10 +187,10 @@ MarkerClusterer.prototype._createClusters = function(){
     }
     var extendedBounds = getExtendedBounds(this._map, mapBounds, this._gridSize);
     for(var i = 0, marker; marker = this._markers[i]; i++){
-        if(!marker.isInCluster && extendedBounds.containsPoint(marker.getPosition()) ){ 
+        if(!marker.isInCluster && extendedBounds.containsPoint(marker.getPosition()) ){
             this._addToClosestCluster(marker);
         }
-    }   
+    }
 };
 
 /**
@@ -218,9 +218,9 @@ MarkerClusterer.prototype._addToClosestCluster = function (marker){
         clusterToAddTo.addMarker(marker);
     } else {
         var cluster = new Cluster(this);
-        cluster.addMarker(marker);            
+        cluster.addMarker(marker);
         this._clusters.push(cluster);
-    }    
+    }
 };
 
 /**
@@ -228,7 +228,7 @@ MarkerClusterer.prototype._addToClosestCluster = function (marker){
  * @return 无返回值。
  */
 MarkerClusterer.prototype._clearLastClusters = function(){
-    for(var i = 0, cluster; cluster = this._clusters[i]; i++){            
+    for(var i = 0, cluster; cluster = this._clusters[i]; i++){
         cluster.remove();
     }
     this._clusters = [];//置空Cluster数组
@@ -299,7 +299,7 @@ MarkerClusterer.prototype.removeMarkers = function(markers) {
     var success = false;
     for (var i = 0; i < markers.length; i++) {
         var r = this._removeMarker(markers[i]);
-        success = success || r; 
+        success = success || r;
     }
 
     if (success) {
@@ -351,7 +351,7 @@ MarkerClusterer.prototype.setGridSize = function(size) {
  * @return {Number} 聚合的最大缩放级别。
  */
 MarkerClusterer.prototype.getMaxZoom = function() {
-    return this._maxZoom;       
+    return this._maxZoom;
 };
 
 /**
@@ -431,7 +431,7 @@ MarkerClusterer.prototype.getMarkers = function() {
 MarkerClusterer.prototype.getClustersCount = function() {
     var count = 0;
     for(var i = 0, cluster; cluster = this._clusters[i]; i++){
-        cluster.isReal() && count++;     
+        cluster.isReal() && count++;
     }
     return count;
 };
@@ -483,23 +483,41 @@ Cluster.prototype.addMarker = function(marker){
     marker.isInCluster = true;
     this._markers.push(marker);
 
+    // var len = this._markers.length;
+    // if(len < this._minClusterSize ){
+    //     this._map.addOverlay(marker);
+    //     //this.updateClusterMarker();
+    //     return true;
+    // } else if (len === this._minClusterSize) {
+    //     for (var i = 0; i < len; i++) {
+    //         var label = this._markers[i].getLabel();
+    //         this._markers[i].getMap() && this._map.removeOverlay(this._markers[i]);
+    //         this._markers[i].setLabel(label);
+    //     }
+    //
+    // }
+    // this._map.addOverlay(this._clusterMarker);
+    // this._isReal = true;
+    // this.updateClusterMarker();
+    // return true;
+};
+
+/**
+ * 进行dom操作
+ * @return 无返回值
+ */
+Cluster.prototype.render = function () {
     var len = this._markers.length;
-    if(len < this._minClusterSize ){     
-        this._map.addOverlay(marker);
-        //this.updateClusterMarker();
-        return true;
-    } else if (len === this._minClusterSize) {
+
+    if (len < this._minClusterSize) {
         for (var i = 0; i < len; i++) {
-            var label = this._markers[i].getLabel();
-            this._markers[i].getMap() && this._map.removeOverlay(this._markers[i]);
-            this._markers[i].setLabel(label);
+            this._map.addOverlay(this._markers[i]);
         }
-        
-    } 
-    this._map.addOverlay(this._clusterMarker);
-    this._isReal = true;
-    this.updateClusterMarker();
-    return true;
+    } else {
+        this._map.addOverlay(this._clusterMarker);
+        this._isReal = true;
+        this.updateClusterMarker();
+    }
 };
 
 /**
@@ -561,7 +579,7 @@ Cluster.prototype.updateClusterMarker = function () {
     }
 
     this._clusterMarker.setPosition(this._center);
-    
+
     this._clusterMarker.setText(this._markers.length);
 
     var thatMap = this._map;
